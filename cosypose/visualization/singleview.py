@@ -37,6 +37,12 @@ def render_prediction_wrt_camera(renderer, pred, camera=None, resolution=(640, 4
 def make_singleview_prediction_plots(scene_ds, renderer, predictions, detections=None, resolution=(640, 480)):
     plotter = Plotter()
 
+    print(np.unique(predictions.infos['scene_id']))
+
+    if len(np.unique(predictions.infos['scene_id'])) == 0:
+        print("no such scene")
+        return None
+
     scene_id, view_id = np.unique(predictions.infos['scene_id']).item(), np.unique(predictions.infos['view_id']).item()
 
     scene_ds_index = scene_ds.frame_index

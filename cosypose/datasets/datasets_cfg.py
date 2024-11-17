@@ -65,7 +65,18 @@ def make_scene_dataset(ds_name, n_frames=None):
             scene_id, view_id = l_n.split('/')
             scene_id, view_id = int(scene_id), int(view_id)
             mask = (frame_index['scene_id'] == scene_id) & (frame_index['view_id'] == view_id)
-            ids.append(np.where(mask)[0].item())
+            where_result = np.where(mask)[0]
+            #print(f"Debug - scene_id: {scene_id}, view_id: {view_id}")
+            #print(f"Debug - mask matches: {mask.sum()}")
+            #print(f"Debug - where result shape: {where_result.shape}, values: {where_result}")
+            if len(where_result) == 0:
+                #logger.warning(f"No matches found for scene_id={scene_id}, view_id={view_id}, skipping...")
+                continue
+            elif len(where_result) > 1:
+                logger.warning(f"Multiple matches ({len(where_result)}) found for scene_id={scene_id}, view_id={view_id}, using first match")
+                ids.append(where_result[0])
+            else:
+                ids.append(where_result.item())
         ds.frame_index = frame_index.iloc[ids].reset_index(drop=True)
 
     # BOP challenge
